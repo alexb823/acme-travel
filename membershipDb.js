@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize");
 
-// const db = new Sequelize(process.env.DATABASE_URL)
 // const db = new Sequelize('postgres://localhost/membership_db')
 
 // For cloud9 db
