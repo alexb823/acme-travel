@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "start:dev": "DATABASE_URL=postgres://localhost/acmi_hotels_db nodemon db.js"
   },
   "keywords": [],
   "author": "",
