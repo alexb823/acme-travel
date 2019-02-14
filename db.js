@@ -37,28 +37,56 @@ Stay.belongsTo(Hotel);
 User.hasMany(Stay);
 Hotel.hasMany(Stay);
 
-//Seed data
+//Seed data another option. doing users and hotels one at a time
+// const syncAndSeed = () => {
+//   return db
+//     .sync({ force: true })
+//     .then(async () => {
+//       const moe = await User.create({ name: 'moe' });
+//       const larry = await User.create({ name: 'larry' });
+//       const curly = await User.create({ name: 'curly' });
+//       const sheraton = await Hotel.create({ name: 'sheraton' });
+//       const hilton = await Hotel.create({ name: 'hilton' });
+//       //Seed data for stay and create the many to many association
+//       await Promise.all([
+//         Stay.create({ days: 3, userId: moe.id, hotelId: sheraton.id }),
+//         Stay.create({ days: 4, userId: moe.id, hotelId: sheraton.id }),
+//         Stay.create({ days: 5, userId: moe.id, hotelId: hilton.id }),
+//         Stay.create({ days: 19, userId: larry.id, hotelId: sheraton.id }),
+//         Stay.create({ days: 4, userId: curly.id, hotelId: sheraton.id }),
+//         Stay.create({ days: 5, userId: curly.id, hotelId: hilton.id }),
+//       ]);
+//     })
+//     .catch(e => console.error(e));
+// };
+
+
+//Seed data Using Promise.all for all the models
+const userNames = ['moe', 'larry', 'curly'];
+const hotelNames = ['sheraton', 'hilton'];
+
 const syncAndSeed = () => {
-  return db
-    .sync({ force: true })
+    return db.sync({force: true})
     .then(async () => {
-      const moe = await User.create({ name: 'moe' });
-      const larry = await User.create({ name: 'larry' });
-      const curly = await User.create({ name: 'curly' });
-      const sheraton = await Hotel.create({ name: 'sheraton' });
-      const hilton = await Hotel.create({ name: 'hilton' });
-      //Seed data for stay and create the many to many association
-      await Promise.all([
-        Stay.create({ days: 3, userId: moe.id, hotelId: sheraton.id }),
-        Stay.create({ days: 4, userId: moe.id, hotelId: sheraton.id }),
-        Stay.create({ days: 5, userId: moe.id, hotelId: hilton.id }),
-        Stay.create({ days: 19, userId: larry.id, hotelId: sheraton.id }),
-        Stay.create({ days: 4, userId: curly.id, hotelId: sheraton.id }),
-        Stay.create({ days: 5, userId: curly.id, hotelId: hilton.id }),
-      ]);
+        const [moe, larry, curly] = await Promise.all(
+            userNames.map(name => User.create({ name }))
+        );
+        const [sheraton, hilton] = await Promise.all(
+            hotelNames.map(name => Hotel.create({ name }))
+        );
+        //Seed data for stay and create the many to many association
+        await Promise.all([
+            Stay.create({ days: 3, userId: moe.id, hotelId: sheraton.id }),
+            Stay.create({ days: 4, userId: moe.id, hotelId: sheraton.id }),
+            Stay.create({ days: 5, userId: moe.id, hotelId: hilton.id }),
+            Stay.create({ days: 19, userId: larry.id, hotelId: sheraton.id }),
+            Stay.create({ days: 4, userId: curly.id, hotelId: sheraton.id }),
+            Stay.create({ days: 5, userId: curly.id, hotelId: hilton.id })
+        ]);
     })
-    .catch(e => console.error(e));
-};
+    .catch(e => console.error(e))
+}
+
 const getAllUsersStayInfo = () => {
   return User.findAll({
     include: [
@@ -69,31 +97,6 @@ const getAllUsersStayInfo = () => {
     ],
   });
 };
-
-//Seed data
-// const userNames = ['moe', 'larry', 'curly'];
-// const hotelNames = ['sheraton', 'hilton'];
-// const syncAndSeed = () => {
-//     return db.sync({force: true})
-//     .then(async () => {
-//         const [moe, larry, curly] = await Promise.all([
-//             userNames.map(name => User.create({ name }))
-//         ]);
-//         const [sheraton, hilton] = await Promise.all([
-//             hotelNames.map(name => Hotel.create({ name }))
-//         ]);
-//         //Seed data for stay and create the many to many association
-//         await Promise.all([
-//             Stay.create({ days: 3, userId: moe.id, hotelId: sheraton.id }),
-//             Stay.create({ days: 4, userId: moe.id, hotelId: sheraton.id }),
-//             Stay.create({ days: 5, userId: moe.id, hotelId: hilton.id }),
-//             Stay.create({ days: 19, userId: larry.id, hotelId: sheraton.id }),
-//             Stay.create({ days: 4, userId: curly.id, hotelId: sheraton.id }),
-//             Stay.create({ days: 5, userId: curly.id, hotelId: hilton.id })
-//         ]);
-//     })
-//     .catch(e => console.error(e))
-// }
 
 syncAndSeed();
 
