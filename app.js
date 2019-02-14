@@ -7,14 +7,6 @@ const app = express();
 
 app.use(morgan('dev'));
 
-// app.get('/', (req, res, next) => {
-//   getAllUsersStayInfo()
-//     .then(UsersStayInfo =>
-//       res.send(UsersStayInfo)
-//     )
-//     .catch(next);
-// });
-
 app.get('/', (req, res, next) => {
   getAllUsersStayInfo()
     .then(UsersStayInfo =>
@@ -32,21 +24,23 @@ app.get('/', (req, res, next) => {
             <body>
               <div class="container">
                 <!-- Page Header -->
-                <h1 class="my-2">Acme Hotels</h1>
+                <h1 class="my-4">Acme Hotels</h1>
 
-                <!-- List of users and their stays -->
+                <div class="col-12 col-lg-6">
+                <!-- List of users -->
                 <ul class="list-group">
                   ${UsersStayInfo.map(user => {
                     return html`
-                      <li class="list-group-item">
-                        ${user.name}
+                      <li class="list-group-item bg-info text-white">
+                        <h5>${user.name}</h5>
                       </li>
                       <li class="list-group-item">
+                        <!-- List of stays for each user -->
                         <ul class="list-group">
                           ${user.stays.map(stay => {
                             return html`
                               <li class="list-group-item">
-                                ${stay.hotel.name} (${stay.days})
+                                ${stay.hotel.name} (${stay.days} days)
                               </li>
                             `;
                           })}
@@ -55,11 +49,20 @@ app.get('/', (req, res, next) => {
                     `;
                   })}
                 </ul>
+                </div>
               </div>
             </body>
           </html>
         `
       )
+    )
+    .catch(next);
+});
+
+app.get('/json', (req, res, next) => {
+  getAllUsersStayInfo()
+    .then(UsersStayInfo =>
+      res.send(UsersStayInfo)
     )
     .catch(next);
 });
